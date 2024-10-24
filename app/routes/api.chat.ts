@@ -30,7 +30,7 @@ async function chatAction({ context, request }: ActionFunctionArgs) {
         console.log(`Reached max token limit (${MAX_TOKENS}): Continuing message (${switchesLeft} switches left)`);
 
         messages.push({ role: 'assistant', content });
-        messages.push({ role: 'user', content: CONTINUE_PROMPT });
+        messages.push({ role: 'user', content: CONTINUE_PROMPT, cache_control: { type: 'ephemeral' } });
 
         const result = await streamText(messages, context.cloudflare.env, options);
 

@@ -16,7 +16,7 @@ import { cubicEasingFn } from '~/utils/easings';
 import { renderLogger } from '~/utils/logger';
 import { EditorPanel } from './EditorPanel';
 import { Preview } from './Preview';
-import { downloadGeneratedFiles } from '~/lib/webcontainer';
+import { downloadGeneratedFiles, saveChanges } from '~/lib/webcontainer';
 
 interface WorkspaceProps {
   chatStarted?: boolean;
@@ -124,6 +124,10 @@ export const Workbench = memo(({ chatStarted, isStreaming }: WorkspaceProps) => 
                 <div className="ml-auto" />
                 {selectedView === 'code' && (
                   <>
+                    <div className="i-ph:file" />
+                    <PanelHeaderButton className="mr-1 text-sm" onClick={() => saveChanges()}>
+                      Mentés
+                    </PanelHeaderButton>
                     <PanelHeaderButton
                       className="mr-1 text-sm"
                       onClick={() => {

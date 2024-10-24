@@ -1,8 +1,9 @@
-import { streamText as _streamText, convertToCoreMessages } from 'ai';
+import { streamText as _streamText, convertToCoreMessages, generateText } from 'ai';
 import { getAPIKey } from '~/lib/.server/llm/api-key';
 import { getAnthropicModel } from '~/lib/.server/llm/model';
 import { MAX_TOKENS } from './constants';
 import { getSystemPrompt } from './prompts';
+import { anthropic } from '@ai-sdk/anthropic';
 
 interface ToolResult<Name extends string, Args, Result> {
   toolCallId: string;
@@ -15,6 +16,9 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   toolInvocations?: ToolResult<string, unknown, unknown>[];
+  cache_control?: {
+    type: 'ephemeral' | 'persistent';
+  };
 }
 
 export type Messages = Message[];
@@ -27,7 +31,7 @@ export function streamText(messages: Messages, env: Env, options?: StreamingOpti
     system: getSystemPrompt(),
     maxTokens: MAX_TOKENS,
     headers: {
-      'anthropic-beta': 'max-tokens-3-5-sonnet-2024-07-15',
+      'anthropic-beta': 'prompt-caching-2024-07-31',
     },
     messages: convertToCoreMessages(messages),
     ...options,

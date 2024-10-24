@@ -18,6 +18,19 @@ export let webcontainer: Promise<WebContainer> = new Promise(() => {
   // noop for ssr
 });
 
+export async function saveChanges() {
+  const container = await webcontainer;
+  // @ts-ignore
+  const files = await container.fs.readdir('.', { recursive: true });
+  debugger;
+  for (const file_name of files) {
+    if (file_name.includes('.')) {
+      const content = await container.fs.readFile(file_name, 'utf-8');
+      await container.fs.writeFile(file_name, content);
+    }
+  }
+}
+
 export async function downloadGeneratedFiles() {
   const container = await webcontainer;
   // @ts-ignore
