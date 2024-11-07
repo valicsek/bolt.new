@@ -21,7 +21,6 @@ export async function saveChanges() {
   const container = await webcontainer;
   // @ts-ignore
   const files = await container.fs.readdir('.', { recursive: true });
-  debugger;
   for (const file_name of files) {
     if (file_name.includes('.')) {
       const content = await container.fs.readFile(file_name, 'utf-8');

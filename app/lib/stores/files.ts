@@ -83,7 +83,6 @@ export class FilesStore {
 
   async saveFile(filePath: string, content: string) {
     const webcontainer = await this.#webcontainer;
-    debugger;
 
     try {
       const relativePath = nodePath.relative(webcontainer.workdir, filePath);

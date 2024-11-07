@@ -1,5 +1,6 @@
 import { FitAddon } from '@xterm/addon-fit';
 import { WebLinksAddon } from '@xterm/addon-web-links';
+import { SearchAddon } from '@xterm/addon-search';
 import { Terminal as XTerm } from '@xterm/xterm';
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
 import type { Theme } from '~/lib/stores/theme';
@@ -30,13 +31,14 @@ export const Terminal = memo(
 
       const fitAddon = new FitAddon();
       const webLinksAddon = new WebLinksAddon();
+      const searchAddon = new SearchAddon();
 
       const terminal = new XTerm({
         cursorBlink: true,
         convertEol: true,
         disableStdin: readonly,
         theme: getTerminalTheme(readonly ? { cursor: '#00000000' } : {}),
-        fontSize: 12,
+        fontSize: 14,
         fontFamily: 'Menlo, courier-new, courier, monospace',
       });
 
@@ -44,6 +46,7 @@ export const Terminal = memo(
 
       terminal.loadAddon(fitAddon);
       terminal.loadAddon(webLinksAddon);
+      terminal.loadAddon(searchAddon);
       terminal.open(element);
 
       const resizeObserver = new ResizeObserver(() => {
