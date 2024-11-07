@@ -142,7 +142,7 @@ export class FilesStore {
       const folder = pathParts.slice(1, -1).join('/');
       if (folder) {
         try {
-          await (await webcontainer).fs.mkdir(folder, { recursive: true });
+          await webcontainer.fs.mkdir(folder, { recursive: true });
         } catch (error) {
           // Ignore error if folder already exists
           if (!(error instanceof Error) || !error.message.includes('EEXIST')) {
@@ -150,7 +150,7 @@ export class FilesStore {
           }
         }
       }
-      await (await webcontainer).fs.writeFile(relativePath, file.content);
+      await webcontainer.fs.writeFile(relativePath, file.content);
     }
   }
 
