@@ -11,12 +11,11 @@ import { IconButton } from '~/components/ui/IconButton';
 import { PanelHeaderButton } from '~/components/ui/PanelHeaderButton';
 import { Slider, type SliderOptions } from '~/components/ui/Slider';
 import { workbenchStore, type WorkbenchViewType } from '~/lib/stores/workbench';
-import { classNames } from '~/utils/classNames';
 import { cubicEasingFn } from '~/utils/easings';
 import { renderLogger } from '~/utils/logger';
 import { EditorPanel } from './EditorPanel';
 import { Preview } from './Preview';
-import { downloadGeneratedFiles, saveChanges } from '~/lib/webcontainer';
+import { downloadGeneratedFiles } from '~/lib/webcontainer';
 
 interface WorkspaceProps {
   chatStarted?: boolean;
@@ -103,16 +102,12 @@ export const Workbench = memo(({ chatStarted, isStreaming }: WorkspaceProps) => 
   return (
     chatStarted && (
       <div className="absolute inset-0">
-        <div className="h-full flex flex-col bg-bolt-elements-background-depth-2 border border-bolt-elements-borderColor shadow-sm rounded-lg overflow-hidden">
+        <div className="h-full flex flex-col bg-bolt-elements-background-depth-2 border border-bolt-elements-borderColor overflow-hidden">
           <div className="flex items-center px-3 py-2 border-b border-bolt-elements-borderColor">
             <Slider selected={selectedView} options={sliderOptions} setSelected={setSelectedView} />
             <div className="ml-auto" />
             {selectedView === 'code' && (
               <>
-                <div className="i-ph:file" />
-                <PanelHeaderButton className="mr-1 text-sm" onClick={() => saveChanges()}>
-                  Mentés
-                </PanelHeaderButton>
                 <PanelHeaderButton
                   className="mr-1 text-sm"
                   onClick={() => {

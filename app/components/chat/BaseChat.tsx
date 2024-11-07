@@ -45,18 +45,19 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
       scrollRef,
       chatStarted = false,
       isStreaming = false,
-      enhancingPrompt = false,
-      promptEnhanced = false,
       messages,
       input = '',
       sendMessage,
       handleInputChange,
-      enhancePrompt,
       handleStop,
     },
     ref,
   ) => {
     const TEXTAREA_MAX_HEIGHT = chatStarted ? 400 : 200;
+
+    const handleClearMessages = () => {
+      throw new Error('Not implemented');
+    };
 
     const chatNotStarted = () => {
       return (
@@ -156,26 +157,14 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
             <div className="flex justify-between text-sm p-4 pt-2">
               <div className="flex gap-1 items-center">
                 <IconButton
-                  title="Enhance prompt"
-                  disabled={input.length === 0 || enhancingPrompt}
-                  className={classNames({
-                    'opacity-100!': enhancingPrompt,
-                    'text-bolt-elements-item-contentAccent! pr-1.5 enabled:hover:bg-bolt-elements-item-backgroundAccent!':
-                      promptEnhanced,
-                  })}
-                  onClick={() => enhancePrompt?.()}
+                  title="Clear messages"
+                  className="ml-2"
+                  onClick={() => {
+                    // This assumes you have a handler prop for clearing messages
+                    handleClearMessages?.();
+                  }}
                 >
-                  {enhancingPrompt ? (
-                    <>
-                      <div className="i-svg-spinners:90-ring-with-bg text-bolt-elements-loader-progress text-xl"></div>
-                      <div className="ml-1.5">Enhancing prompt...</div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="i-bolt:stars text-xl"></div>
-                      {promptEnhanced && <div className="ml-1.5">Prompt enhanced</div>}
-                    </>
-                  )}
+                  <div className="i-ph:trash text-xl" />
                 </IconButton>
               </div>
               {input.length > 3 ? (
