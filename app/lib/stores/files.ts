@@ -82,6 +82,7 @@ export class FilesStore {
 
   async saveFile(filePath: string, content: string) {
     const webcontainer = await this.#webcontainer;
+    debugger;
 
     try {
       const relativePath = nodePath.relative(webcontainer.workdir, filePath);
@@ -98,9 +99,9 @@ export class FilesStore {
 
       await webcontainer.fs.writeFile(relativePath, content);
 
-      if (!this.#modifiedFiles.has(filePath)) {
+      /*if (!this.#modifiedFiles.has(filePath)) {
         this.#modifiedFiles.set(filePath, oldContent);
-      }
+      }*/
 
       // we immediately update the file and don't rely on the `change` event coming from the watcher
       this.files.setKey(filePath, { type: 'file', content, isBinary: false });

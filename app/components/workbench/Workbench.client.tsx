@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/react';
-import { motion, type HTMLMotionProps, type Variants } from 'framer-motion';
+import { motion, type HTMLMotionProps } from 'framer-motion';
 import { computed } from 'nanostores';
 import { memo, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
@@ -35,23 +35,6 @@ const sliderOptions: SliderOptions<WorkbenchViewType> = {
     text: 'Preview',
   },
 };
-
-const workbenchVariants = {
-  closed: {
-    width: 0,
-    transition: {
-      duration: 0.2,
-      ease: cubicEasingFn,
-    },
-  },
-  open: {
-    width: 'var(--workbench-width)',
-    transition: {
-      duration: 0.2,
-      ease: cubicEasingFn,
-    },
-  },
-} satisfies Variants;
 
 export const Workbench = memo(({ chatStarted, isStreaming }: WorkspaceProps) => {
   renderLogger.trace('Workbench');
@@ -100,14 +83,55 @@ export const Workbench = memo(({ chatStarted, isStreaming }: WorkspaceProps) => 
     workbenchStore.resetCurrentDocument();
   }, []);
 
+  const onSyncFiles = useCallback(() => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.webkitdirectory = true;
+    input.multiple = true;
+    input.onchange = async (e) => {
+      const files = Array.from((e.target as HTMLInputElement).files || []);
+      const mappedFiles: Array<{ path: string; content: string }> = [];
+      // filter out node_modules and hidden files
+      const filteredFiles = files.filter((file) => !file.webkitRelativePath.includes('node_modules'));
+
+      for (const file of filteredFiles) {
+        if (file.webkitRelativePath.includes('node_modules') || file.webkitRelativePath.includes('out')) {
+          continue;
+        }
+
+        const writableStream = new WritableStream({
+          start() {},
+          async write(chunk) {
+            const decoder = new TextDecoder();
+            const content = decoder.decode(chunk);
+            mappedFiles.push({
+              path: file.webkitRelativePath,
+              content,
+            });
+          },
+          close() {},
+          abort(reason) {
+            console.error('Stream aborted:', reason);
+          },
+        });
+
+        try {
+          const stream = file.stream();
+          await stream.pipeTo(writableStream);
+        } catch (err) {
+          console.error('Error processing file:', file.name, err);
+        }
+      }
+
+      workbenchStore.setFiles(mappedFiles);
+    };
+
+    input.click();
+  }, []);
+
   return (
     chatStarted && (
-      <motion.div
-        initial="closed"
-        animate={showWorkbench ? 'open' : 'closed'}
-        variants={workbenchVariants}
-        className="z-workbench"
-      >
+      <motion.div initial="closed" animate={showWorkbench ? 'open' : 'closed'} className="z-workbench">
         <div
           className={classNames(
             'fixed top-[calc(var(--header-height)+1.5rem)] bottom-6 w-[var(--workbench-inner-width)] mr-4 z-0 transition-[left,width] duration-200 bolt-ease-cubic-bezier',
@@ -157,31 +181,12 @@ export const Workbench = memo(({ chatStarted, isStreaming }: WorkspaceProps) => 
                   }}
                 />
               </div>
-              <div className="relative flex-1 overflow-hidden">
-                <View
-                  initial={{ x: selectedView === 'code' ? 0 : '-100%' }}
-                  animate={{ x: selectedView === 'code' ? 0 : '-100%' }}
-                >
-                  <EditorPanel
-                    editorDocument={currentDocument}
-                    isStreaming={isStreaming}
-                    selectedFile={selectedFile}
-                    files={files}
-                    unsavedFiles={unsavedFiles}
-                    onFileSelect={onFileSelect}
-                    onEditorScroll={onEditorScroll}
-                    onEditorChange={onEditorChange}
-                    onFileSave={onFileSave}
-                    onFileReset={onFileReset}
-                  />
-                </View>
-                <View
-                  initial={{ x: selectedView === 'preview' ? 0 : '100%' }}
-                  animate={{ x: selectedView === 'preview' ? 0 : '100%' }}
-                >
-                  <Preview />
-                </View>
-              </div>
+              <View
+                initial={{ x: selectedView === 'preview' ? 0 : '100%' }}
+                animate={{ x: selectedView === 'preview' ? 0 : '100%' }}
+              >
+                <Preview />
+              </View>
             </div>
           </div>
         </div>

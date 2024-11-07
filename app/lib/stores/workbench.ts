@@ -9,6 +9,7 @@ import { EditorStore } from './editor';
 import { FilesStore, type FileMap } from './files';
 import { PreviewsStore } from './previews';
 import { TerminalStore } from './terminal';
+import JSZip from 'jszip';
 
 export interface ArtifactState {
   id: string;
@@ -84,6 +85,53 @@ export class WorkbenchStore {
 
   onTerminalResize(cols: number, rows: number) {
     this.#terminalStore.onTerminalResize(cols, rows);
+  }
+
+  async downloadProject() {
+    const files = this.files.get();
+    const zip = new JSZip();
+
+    for (const [path, file] of Object.entries(files)) {
+      if (file?.type === 'file') {
+        zip.file(path, file.content);
+      }
+    }
+
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'project.zip';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  async setFiles(files: Array<{ path: string; content: string }>) {
+    for (const file of files) {
+      // Skip the first folder segment since it's the project root
+      const pathParts = file.path.split('/');
+      const relativePath = pathParts.slice(1).join('/');
+
+      if (!relativePath) {
+        continue;
+      }
+
+      const folder = pathParts.slice(1, -1).join('/');
+      if (folder) {
+        try {
+          await (await webcontainer).fs.mkdir(folder, { recursive: true });
+        } catch (error) {
+          // Ignore error if folder already exists
+          if (!(error instanceof Error) || !error.message.includes('EEXIST')) {
+            throw error;
+          }
+        }
+      }
+      await (await webcontainer).fs.writeFile(relativePath, file.content);
+    }
+    console.log(this.#filesStore.files.get());
   }
 
   setDocuments(files: FileMap) {
@@ -208,10 +256,6 @@ export class WorkbenchStore {
 
   resetAllFileModifications() {
     this.#filesStore.resetFileModifications();
-  }
-
-  abortAllActions() {
-    // TODO: what do we wanna do and how do we wanna recover from this?
   }
 
   addArtifact({ messageId, title, id }: ArtifactCallbackData) {

@@ -169,8 +169,8 @@ function Folder({ folder: { depth, name }, collapsed, selected = false, onClick 
       })}
       depth={depth}
       iconClasses={classNames({
-        'i-ph:caret-right scale-98': collapsed,
-        'i-ph:caret-down scale-98': !collapsed,
+        'i-ph:folder-simple-duotone scale-98': collapsed,
+        'i-ph:folder-open-duotone scale-98': !collapsed,
       })}
       onClick={onClick}
     >

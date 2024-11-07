@@ -1,42 +1,16 @@
-import { motion, type Variants } from 'framer-motion';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Dialog, DialogButton, DialogDescription, DialogRoot, DialogTitle } from '~/components/ui/Dialog';
-import { IconButton } from '~/components/ui/IconButton';
 import { ThemeSwitch } from '~/components/ui/ThemeSwitch';
 import { db, deleteById, getAll, chatId, type ChatHistoryItem } from '~/lib/persistence';
-import { cubicEasingFn } from '~/utils/easings';
 import { logger } from '~/utils/logger';
 import { HistoryItem } from './HistoryItem';
 import { binDates } from './date-binning';
 
-const menuVariants = {
-  closed: {
-    opacity: 0,
-    visibility: 'hidden',
-    left: '-150px',
-    transition: {
-      duration: 0.2,
-      ease: cubicEasingFn,
-    },
-  },
-  open: {
-    opacity: 1,
-    visibility: 'initial',
-    left: 0,
-    transition: {
-      duration: 0.2,
-      ease: cubicEasingFn,
-    },
-  },
-} satisfies Variants;
-
 type DialogContent = { type: 'delete'; item: ChatHistoryItem } | null;
 
 export function Menu() {
-  const menuRef = useRef<HTMLDivElement>(null);
   const [list, setList] = useState<ChatHistoryItem[]>([]);
-  const [open, setOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState<DialogContent>(null);
 
   const loadEntries = useCallback(() => {
@@ -57,7 +31,6 @@ export function Menu() {
           loadEntries();
 
           if (chatId.get() === item.id) {
-            // hard page navigation to clear the stores
             window.location.pathname = '/';
           }
         })
@@ -72,42 +45,14 @@ export function Menu() {
     setDialogContent(null);
   };
 
-  useEffect(() => {
-    if (open) {
-      loadEntries();
-    }
-  }, [open]);
-
-  useEffect(() => {
-    const enterThreshold = 40;
-    const exitThreshold = 40;
-
-    function onMouseMove(event: MouseEvent) {
-      if (event.pageX < enterThreshold) {
-        setOpen(true);
-      }
-
-      if (menuRef.current && event.clientX > menuRef.current.getBoundingClientRect().right + exitThreshold) {
-        setOpen(false);
-      }
-    }
-
-    window.addEventListener('mousemove', onMouseMove);
-
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-    };
+  // Load entries on mount
+  useState(() => {
+    loadEntries();
   }, []);
 
   return (
-    <motion.div
-      ref={menuRef}
-      initial="closed"
-      animate={open ? 'open' : 'closed'}
-      variants={menuVariants}
-      className="flex flex-col side-menu fixed top-0 w-[350px] h-full bg-bolt-elements-background-depth-2 border-r rounded-r-3xl border-bolt-elements-borderColor z-sidebar shadow-xl shadow-bolt-elements-sidebar-dropdownShadow text-sm"
-    >
-      <div className="flex items-center h-[var(--header-height)]">{/* Placeholder */}</div>
+    <div className="flex flex-col w-[200px] h-full border-r border-bolt-elements-borderColor z-sidebar shadow-xl shadow-bolt-elements-sidebar-dropdownShadow text-sm">
+      <div className="flex items-center h-[var(--header-height)]" />
       <div className="flex-1 flex flex-col h-full w-full overflow-hidden">
         <div className="p-4">
           <a
@@ -167,6 +112,6 @@ export function Menu() {
           <ThemeSwitch className="ml-auto" />
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
