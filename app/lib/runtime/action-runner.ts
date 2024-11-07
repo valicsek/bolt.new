@@ -136,14 +136,6 @@ export class ActionRunner {
       process.kill();
     });
 
-    process.output.pipeTo(
-      new WritableStream({
-        write(data) {
-          console.log(data);
-        },
-      }),
-    );
-
     const exitCode = await process.exit;
 
     logger.debug(`Process terminated with code ${exitCode}`);
