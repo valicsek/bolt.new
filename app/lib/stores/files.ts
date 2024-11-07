@@ -8,6 +8,7 @@ import { WORK_DIR } from '~/utils/constants';
 import { computeFileModifications } from '~/utils/diff';
 import { createScopedLogger } from '~/utils/logger';
 import { unreachable } from '~/utils/unreachable';
+import JSZip from 'jszip';
 
 const logger = createScopedLogger('FilesStore');
 
@@ -121,6 +122,34 @@ export class FilesStore {
       { include: [`${WORK_DIR}/**`], exclude: ['**/node_modules', '.git'], includeContent: true },
       bufferWatchEvents(100, this.#processEventBuffer.bind(this)),
     );
+  }
+
+  async downloadProject() {
+    const container = await this.#webcontainer;
+    // @ts-ignore
+    const files = await container.fs.readdir('.', { recursive: true });
+    const zip = new JSZip();
+
+    for (const file_name of files) {
+      // if file does not have extension, then it is a directory
+      if (!file_name.includes('.')) {
+        zip.folder(file_name);
+      } else {
+        const content = await container.fs.readFile(file_name, 'utf-8');
+        zip.file(file_name, content);
+      }
+    }
+
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'generated_files.zip';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   #processEventBuffer(events: Array<[events: PathWatcherEvent[]]>) {

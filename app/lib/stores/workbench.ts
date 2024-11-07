@@ -87,27 +87,6 @@ export class WorkbenchStore {
     this.#terminalStore.onTerminalResize(cols, rows);
   }
 
-  async downloadProject() {
-    const files = this.files.get();
-    const zip = new JSZip();
-
-    for (const [path, file] of Object.entries(files)) {
-      if (file?.type === 'file') {
-        zip.file(path, file.content);
-      }
-    }
-
-    const blob = await zip.generateAsync({ type: 'blob' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'project.zip';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
   async setFiles(files: Array<{ path: string; content: string }>) {
     for (const file of files) {
       // Skip the first folder segment since it's the project root
@@ -252,6 +231,10 @@ export class WorkbenchStore {
 
   getFileModifcations() {
     return this.#filesStore.getFileModifications();
+  }
+
+  downloadProject() {
+    this.#filesStore.downloadProject();
   }
 
   resetAllFileModifications() {

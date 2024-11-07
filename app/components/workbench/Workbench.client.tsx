@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/react';
-import { motion, type HTMLMotionProps, type Variants } from 'framer-motion';
+import { motion, type HTMLMotionProps } from 'framer-motion';
 import { computed } from 'nanostores';
 import { memo, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
@@ -15,7 +15,6 @@ import { cubicEasingFn } from '~/utils/easings';
 import { renderLogger } from '~/utils/logger';
 import { EditorPanel } from './EditorPanel';
 import { Preview } from './Preview';
-import { downloadGeneratedFiles } from '~/lib/webcontainer';
 
 interface WorkspaceProps {
   chatStarted?: boolean;
@@ -34,23 +33,6 @@ const sliderOptions: SliderOptions<WorkbenchViewType> = {
     text: 'Preview',
   },
 };
-
-const workbenchVariants = {
-  closed: {
-    width: 0,
-    transition: {
-      duration: 0.2,
-      ease: cubicEasingFn,
-    },
-  },
-  open: {
-    width: 'var(--workbench-width)',
-    transition: {
-      duration: 0.2,
-      ease: cubicEasingFn,
-    },
-  },
-} satisfies Variants;
 
 export const Workbench = memo(({ chatStarted, isStreaming }: WorkspaceProps) => {
   renderLogger.trace('Workbench');
@@ -111,7 +93,7 @@ export const Workbench = memo(({ chatStarted, isStreaming }: WorkspaceProps) => 
                 <PanelHeaderButton
                   className="mr-1 text-sm"
                   onClick={() => {
-                    downloadGeneratedFiles();
+                    workbenchStore.downloadProject();
                   }}
                 >
                   <div className="i-ph:file-zip" />
