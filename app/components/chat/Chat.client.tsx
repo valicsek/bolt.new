@@ -198,6 +198,12 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
 
   const [messageRef, scrollRef] = useSnapScroll();
 
+  const handleDeleteMessage = (index: number) => {
+    const newMessages = [...messages];
+    newMessages.splice(index, 1);
+    storeMessageHistory(newMessages);
+  };
+
   return (
     <BaseChat
       ref={animationScope}
@@ -213,6 +219,7 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
       scrollRef={scrollRef}
       handleInputChange={handleInputChange}
       handleStop={abort}
+      onDeleteMessage={handleDeleteMessage}
       messages={messages.map((message, i) => {
         if (message.role === 'user') {
           return message;

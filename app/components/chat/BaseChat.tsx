@@ -25,6 +25,7 @@ interface BaseChatProps {
   enhancePrompt?: () => void;
   selectedFile?: string;
   onFileSelect?: (file: string) => void;
+  onDeleteMessage?: (index: number) => void;
 }
 
 const EXAMPLE_PROMPTS = [
@@ -50,6 +51,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
       sendMessage,
       handleInputChange,
       handleStop,
+      onDeleteMessage,
     },
     ref,
   ) => {
@@ -97,6 +99,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
           className="flex flex-col w-full flex-1 max-w-[500px] p-2 mx-auto z-1"
           messages={messages}
           isStreaming={isStreaming}
+          onDeleteMessage={onDeleteMessage}
         />
       );
     };
