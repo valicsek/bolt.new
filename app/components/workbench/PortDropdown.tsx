@@ -9,6 +9,7 @@ interface PortDropdownProps {
   setIsDropdownOpen: (value: boolean) => void;
   setHasSelectedPreview: (value: boolean) => void;
   previews: PreviewInfo[];
+  setWidthToMobile: () => void;
 }
 
 export const PortDropdown = memo(
@@ -17,6 +18,7 @@ export const PortDropdown = memo(
     setActivePreviewIndex,
     isDropdownOpen,
     setIsDropdownOpen,
+    setWidthToMobile,
     setHasSelectedPreview,
     previews,
   }: PortDropdownProps) => {
@@ -48,7 +50,10 @@ export const PortDropdown = memo(
 
     return (
       <div className="relative z-port-dropdown" ref={dropdownRef}>
-        <IconButton icon="i-ph:plug" onClick={() => setIsDropdownOpen(!isDropdownOpen)} />
+        <div className="flex items-center gap-2">
+          <IconButton icon="i-ph:plug" onClick={() => setIsDropdownOpen(!isDropdownOpen)} />
+          <IconButton icon="i-ph:device-mobile" onClick={() => setWidthToMobile()} />
+        </div>
         {isDropdownOpen && (
           <div className="absolute right-0 mt-2 bg-bolt-elements-background-depth-2 border border-bolt-elements-borderColor rounded shadow-sm min-w-[140px] dropdown-animation">
             <div className="px-4 py-2 border-b border-bolt-elements-borderColor text-sm font-semibold text-bolt-elements-textPrimary">

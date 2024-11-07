@@ -56,6 +56,12 @@ export const Preview = memo(() => {
     [],
   );
 
+  const setWidthToMobile = useCallback(() => {
+    if (iframeRef.current) {
+      iframeRef.current.classList.add('w-full', 'h-full');
+    }
+  }, []);
+
   // when previews change, display the lowest port if user hasn't selected a preview
   useEffect(() => {
     if (previews.length > 1 && !hasSelectedPreview.current) {
@@ -108,6 +114,7 @@ export const Preview = memo(() => {
             isDropdownOpen={isPortDropdownOpen}
             setHasSelectedPreview={(value) => (hasSelectedPreview.current = value)}
             setIsDropdownOpen={setIsPortDropdownOpen}
+            setWidthToMobile={() => setWidthToMobile(true)}
             previews={previews}
           />
         )}
