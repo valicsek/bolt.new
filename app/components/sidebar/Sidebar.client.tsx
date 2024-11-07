@@ -57,7 +57,7 @@ export function Sidebar() {
   return (
     <div
       className={classNames(
-        'flex flex-col h-full border-r border-bolt-elements-borderColor z-sidebar shadow-xl shadow-bolt-elements-sidebar-dropdownShadow text-sm',
+        'flex flex-col h-full bg-[var(--sidebar-background)] z-sidebar text-sm',
         store.show ? 'w-[200px]' : 'w-0',
       )}
     >

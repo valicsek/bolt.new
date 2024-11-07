@@ -8,7 +8,7 @@ export function Header() {
   const toggleSidebar = () => sidebarStore.setKey('show', !store.show);
 
   return (
-    <header className="flex p-5 items-center border-b border-gray-700 bg-gray-900 h-[var(--header-height)]">
+    <header className="flex p-5 items-center border-b border-gray-700 bg-[var(--header-background)] h-[var(--header-height)]">
       <div className="flex items-center gap-2 z-logo text-bolt-elements-textPrimary cursor-pointer">
         <div className="i-ph:sidebar-simple-duotone text-xl" onClick={toggleSidebar} />
       </div>

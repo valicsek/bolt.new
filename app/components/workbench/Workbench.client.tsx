@@ -102,90 +102,73 @@ export const Workbench = memo(({ chatStarted, isStreaming }: WorkspaceProps) => 
 
   return (
     chatStarted && (
-      <motion.div
-        initial="closed"
-        animate={showWorkbench ? 'open' : 'closed'}
-        variants={workbenchVariants}
-        className="z-workbench"
-      >
-        <div
-          className={classNames(
-            'fixed top-[calc(var(--header-height)+1.5rem)] bottom-6 w-[var(--workbench-inner-width)] mr-4 z-0 transition-[left,width] duration-200 bolt-ease-cubic-bezier',
-            {
-              'left-[var(--workbench-left)]': showWorkbench,
-              'left-[100%]': !showWorkbench,
-            },
-          )}
-        >
-          <div className="absolute inset-0">
-            <div className="h-full flex flex-col bg-bolt-elements-background-depth-2 border border-bolt-elements-borderColor shadow-sm rounded-lg overflow-hidden">
-              <div className="flex items-center px-3 py-2 border-b border-bolt-elements-borderColor">
-                <Slider selected={selectedView} options={sliderOptions} setSelected={setSelectedView} />
-                <div className="ml-auto" />
-                {selectedView === 'code' && (
-                  <>
-                    <div className="i-ph:file" />
-                    <PanelHeaderButton className="mr-1 text-sm" onClick={() => saveChanges()}>
-                      Mentés
-                    </PanelHeaderButton>
-                    <PanelHeaderButton
-                      className="mr-1 text-sm"
-                      onClick={() => {
-                        downloadGeneratedFiles();
-                      }}
-                    >
-                      <div className="i-ph:file-zip" />
-                      Download Files
-                    </PanelHeaderButton>
-                    <PanelHeaderButton
-                      className="mr-1 text-sm"
-                      onClick={() => {
-                        workbenchStore.toggleTerminal(!workbenchStore.showTerminal.get());
-                      }}
-                    >
-                      <div className="i-ph:terminal" />
-                      Toggle Terminal
-                    </PanelHeaderButton>
-                  </>
-                )}
-                <IconButton
-                  icon="i-ph:x-circle"
-                  className="-mr-1"
-                  size="xl"
+      <div className="absolute inset-0">
+        <div className="h-full flex flex-col bg-bolt-elements-background-depth-2 border border-bolt-elements-borderColor shadow-sm rounded-lg overflow-hidden">
+          <div className="flex items-center px-3 py-2 border-b border-bolt-elements-borderColor">
+            <Slider selected={selectedView} options={sliderOptions} setSelected={setSelectedView} />
+            <div className="ml-auto" />
+            {selectedView === 'code' && (
+              <>
+                <div className="i-ph:file" />
+                <PanelHeaderButton className="mr-1 text-sm" onClick={() => saveChanges()}>
+                  Mentés
+                </PanelHeaderButton>
+                <PanelHeaderButton
+                  className="mr-1 text-sm"
                   onClick={() => {
-                    workbenchStore.showWorkbench.set(false);
+                    downloadGeneratedFiles();
                   }}
-                />
-              </div>
-              <div className="relative flex-1 overflow-hidden">
-                <View
-                  initial={{ x: selectedView === 'code' ? 0 : '-100%' }}
-                  animate={{ x: selectedView === 'code' ? 0 : '-100%' }}
                 >
-                  <EditorPanel
-                    editorDocument={currentDocument}
-                    isStreaming={isStreaming}
-                    selectedFile={selectedFile}
-                    files={files}
-                    unsavedFiles={unsavedFiles}
-                    onFileSelect={onFileSelect}
-                    onEditorScroll={onEditorScroll}
-                    onEditorChange={onEditorChange}
-                    onFileSave={onFileSave}
-                    onFileReset={onFileReset}
-                  />
-                </View>
-                <View
-                  initial={{ x: selectedView === 'preview' ? 0 : '100%' }}
-                  animate={{ x: selectedView === 'preview' ? 0 : '100%' }}
+                  <div className="i-ph:file-zip" />
+                  Download Files
+                </PanelHeaderButton>
+                <PanelHeaderButton
+                  className="mr-1 text-sm"
+                  onClick={() => {
+                    workbenchStore.toggleTerminal(!workbenchStore.showTerminal.get());
+                  }}
                 >
-                  <Preview />
-                </View>
-              </div>
-            </div>
+                  <div className="i-ph:terminal" />
+                  Toggle Terminal
+                </PanelHeaderButton>
+              </>
+            )}
+            <IconButton
+              icon="i-ph:x-circle"
+              className="-mr-1"
+              size="xl"
+              onClick={() => {
+                workbenchStore.showWorkbench.set(false);
+              }}
+            />
+          </div>
+          <div className="relative flex-1 overflow-hidden">
+            <View
+              initial={{ x: selectedView === 'code' ? 0 : '-100%' }}
+              animate={{ x: selectedView === 'code' ? 0 : '-100%' }}
+            >
+              <EditorPanel
+                editorDocument={currentDocument}
+                isStreaming={isStreaming}
+                selectedFile={selectedFile}
+                files={files}
+                unsavedFiles={unsavedFiles}
+                onFileSelect={onFileSelect}
+                onEditorScroll={onEditorScroll}
+                onEditorChange={onEditorChange}
+                onFileSave={onFileSave}
+                onFileReset={onFileReset}
+              />
+            </View>
+            <View
+              initial={{ x: selectedView === 'preview' ? 0 : '100%' }}
+              animate={{ x: selectedView === 'preview' ? 0 : '100%' }}
+            >
+              <Preview />
+            </View>
           </div>
         </div>
-      </motion.div>
+      </div>
     )
   );
 });
