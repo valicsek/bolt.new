@@ -1,15 +1,19 @@
 import { useCallback, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useStore } from '@nanostores/react';
+import { sidebarStore } from '~/lib/stores/sidebar';
 import { Dialog, DialogButton, DialogDescription, DialogRoot, DialogTitle } from '~/components/ui/Dialog';
 import { ThemeSwitch } from '~/components/ui/ThemeSwitch';
 import { db, deleteById, getAll, chatId, type ChatHistoryItem } from '~/lib/persistence';
 import { logger } from '~/utils/logger';
 import { HistoryItem } from './HistoryItem';
 import { binDates } from './date-binning';
+import { classNames } from '~/utils/classNames';
 
 type DialogContent = { type: 'delete'; item: ChatHistoryItem } | null;
 
-export function Menu() {
+export function Sidebar() {
+  const store = useStore(sidebarStore);
   const [list, setList] = useState<ChatHistoryItem[]>([]);
   const [dialogContent, setDialogContent] = useState<DialogContent>(null);
 
@@ -48,11 +52,15 @@ export function Menu() {
   // Load entries on mount
   useState(() => {
     loadEntries();
-  }, []);
+  });
 
   return (
-    <div className="flex flex-col w-[200px] h-full border-r border-bolt-elements-borderColor z-sidebar shadow-xl shadow-bolt-elements-sidebar-dropdownShadow text-sm">
-      <div className="flex items-center h-[var(--header-height)]" />
+    <div
+      className={classNames(
+        'flex flex-col h-full border-r border-bolt-elements-borderColor z-sidebar shadow-xl shadow-bolt-elements-sidebar-dropdownShadow text-sm',
+        store.show ? 'w-[200px]' : 'w-0',
+      )}
+    >
       <div className="flex-1 flex flex-col h-full w-full overflow-hidden">
         <div className="p-4">
           <a

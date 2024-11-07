@@ -1,7 +1,7 @@
 import type { Message } from 'ai';
 import React, { type RefCallback } from 'react';
 import { ClientOnly } from 'remix-utils/client-only';
-import { Menu } from '~/components/sidebar/Menu.client';
+import { Sidebar } from '~/components/sidebar/Sidebar.client';
 import { IconButton } from '~/components/ui/IconButton';
 import { Workbench } from '~/components/workbench/Workbench.client';
 import { classNames } from '~/utils/classNames';
@@ -66,7 +66,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
               What can I help you with?
             </h1>
             {inputPanel()}
-            <div id="examples" className="relative  justify-center">
+            <div id="examples" className="relative justify-center">
               <div className="flex flex-col space-y-2 [mask-image:linear-gradient(to_bottom,black_0%,transparent_180%)] hover:[mask-image:none]">
                 {EXAMPLE_PROMPTS.map((examplePrompt, index) => {
                   return (
@@ -190,8 +190,8 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
     };
 
     return (
-      <div ref={ref} className={classNames('relative flex h-full w-full overflow-hidden bg-gray-900')}>
-        <ClientOnly>{() => <Menu />}</ClientOnly>
+      <div ref={ref} className="relative flex h-full w-full overflow-hidden">
+        <ClientOnly>{() => <Sidebar />}</ClientOnly>
         <div
           ref={scrollRef}
           className={classNames('flex overflow-scroll', { 'w-full items-center mt-24': !chatStarted })}
