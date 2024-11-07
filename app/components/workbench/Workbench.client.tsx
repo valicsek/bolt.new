@@ -81,6 +81,10 @@ export const Workbench = memo(({ chatStarted, isStreaming }: WorkspaceProps) => 
     workbenchStore.resetCurrentDocument();
   }, []);
 
+  const onOpenProject = useCallback(() => {
+    workbenchStore.openProject();
+  }, []);
+
   return (
     chatStarted && (
       <div className="absolute inset-0">
@@ -90,6 +94,10 @@ export const Workbench = memo(({ chatStarted, isStreaming }: WorkspaceProps) => 
             <div className="ml-auto" />
             {selectedView === 'code' && (
               <>
+                <PanelHeaderButton className="mr-1 text-sm" onClick={onOpenProject}>
+                  <div className="i-ph:file-zip" />
+                  Open Project
+                </PanelHeaderButton>
                 <PanelHeaderButton
                   className="mr-1 text-sm"
                   onClick={() => {

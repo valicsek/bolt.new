@@ -124,6 +124,36 @@ export class FilesStore {
     );
   }
 
+  async openProject(files: Array<{ path: string; content: string }>) {
+    const webcontainer = await this.#webcontainer;
+
+    // Clear the files store
+    this.files.set({});
+
+    for (const file of files) {
+      // Skip the first folder segment since it's the project root
+      const pathParts = file.path.split('/');
+      const relativePath = pathParts.slice(1).join('/');
+
+      if (!relativePath) {
+        continue;
+      }
+
+      const folder = pathParts.slice(1, -1).join('/');
+      if (folder) {
+        try {
+          await (await webcontainer).fs.mkdir(folder, { recursive: true });
+        } catch (error) {
+          // Ignore error if folder already exists
+          if (!(error instanceof Error) || !error.message.includes('EEXIST')) {
+            throw error;
+          }
+        }
+      }
+      await (await webcontainer).fs.writeFile(relativePath, file.content);
+    }
+  }
+
   async downloadProject() {
     const container = await this.#webcontainer;
     // @ts-ignore
